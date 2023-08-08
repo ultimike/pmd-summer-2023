@@ -1,0 +1,4 @@
+name: pmdsum2023
+recipe: drupal10
+config:
+  webroot: web
