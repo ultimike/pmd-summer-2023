@@ -9,8 +9,6 @@ third_party_settings:
     available_menus:
       - main
     parent: 'main:'
-_core:
-  default_config_hash: iUvUkR8JrI-FOkxSB0A01Bgq0psnrcieE3ZnHCvaSyI
 name: Repository
 type: repository
 description: ''
