@@ -163,7 +163,7 @@ final class AddYmlRepoTest extends BrowserTestBase {
 
     // We can't check for the following message unless we also have the future
     // drupaleasy_notify module enabled.
-    // $session->responseContains('The repo named <em class="placeholder">The Batman repository</em> has been created');
+    //$session->responseContains('The repo named <em class="placeholder">The Batman repository</em> has been created');
 
     // Find the new repository node.
     $query = \Drupal::entityQuery('node');
@@ -171,6 +171,19 @@ final class AddYmlRepoTest extends BrowserTestBase {
     $query->accessCheck(TRUE);
     $results = $query->execute();
     $session->assert(count($results) === 1, 'Either 0 or more than 1 repository nodes were found.');
+
+    $entity_type_manager = \Drupal::entityTypeManager();
+    /** @var \Drupal\node\NodeStorageInterface $node_storage */
+    $node_storage = $entity_type_manager->getStorage('node');
+    /** @var \Drupal\node\NodeInterface $node */
+    $node = $node_storage->load(reset($results));
+
+    // Check values.
+    $session->assert($node->field_machine_name->value == 'batman-repo', 'Machine name does not match.');
+    $session->assert($node->field_source->value == 'yml_remote', 'Source does not match.');
+    $session->assert($node->getTitle() == 'The Batman repository', 'Title does not match.');
+    $session->assert($node->field_description->value == 'This is where Batman keeps all his crime-fighting code.', 'Description does not match.');
+    $session->assert($node->field_number_of_issues->value == '6', 'Number of issues does not match.');
   }
 
 }
