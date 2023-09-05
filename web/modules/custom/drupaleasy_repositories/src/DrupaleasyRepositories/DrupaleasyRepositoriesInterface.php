@@ -39,12 +39,12 @@ interface DrupaleasyRepositoriesInterface extends PluginInspectionInterface, Der
   /**
    * Queries the repository service for metadata about a repository.
    *
-   * @param string $url
+   * @param string $uri
    *   The URL of the repository we're looking for.
    *
    * @return array<string, array<string, string>>
    *   The metadata.
    */
-  public function getRepo(string $url): array;
+  public function getRepo(string $uri): array;
 
 }
