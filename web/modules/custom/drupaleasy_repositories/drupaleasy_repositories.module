@@ -9,6 +9,7 @@ declare(strict_types = 1);
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
+use Drupal\user\Entity\User;
 
 /**
  * Implements hook_form_FORM_ID_alter().
@@ -21,6 +22,7 @@ function drupaleasy_repositories_form_user_form_alter(array &$form, FormStateInt
   }
 
   $form['#validate'][] = '_drupaleasy_repositories_user_form_validate';
+  $form['actions']['submit']['#submit'][] = '_drupaleasy_repositories_user_form_submit';
 }
 
 /**
@@ -67,13 +69,8 @@ function _drupaleasy_repositories_user_form_validate(array $form, FormStateInter
   $username = $form_state->getValue('name');
   $user = user_load_by_name($username);
 
-  // TODO: $user->id() returns string (ASCII char) rather than int, which
-  //   throws exception at validateRepositoryUrls() because signature
-  //   parameter datatype is 'int $uid'.
-  //   Typecasting to (int) or changing method signature both fix this. -- ACY.
-
   // If the user doesn't exist, then use the anonymous user ID (0).
-  $uid = is_object($user) ? $user->id() : 0;
+  $uid = is_object($user) ? (int) $user->id() : 0;
   $error = $repository_service->validateRepositoryUrls($form_state->getValue('field_repository_url'), $uid);
 
   if ($error) {
@@ -81,5 +78,22 @@ function _drupaleasy_repositories_user_form_validate(array $form, FormStateInter
       'field_repository_url',
       $error,
     );
+  }
+}
+
+/**
+ * Custom submit handler for user profile form.
+ *
+ * @param array $form
+ *   The form array.
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ *   The form state.
+ */
+function _drupaleasy_repositories_user_form_submit(array $form, FormStateInterface &$form_state): void {
+  /** @var \Drupal\drupaleasy_repositories\DrupaleasyRepositoriesService $repository_service */
+  $repository_service = \Drupal::service('drupaleasy_repositories.service');
+  $account = User::load($form_state->getValue('uid'));
+  if (!is_null($account)) {
+    $repository_service->updateRepositories($account);
   }
 }

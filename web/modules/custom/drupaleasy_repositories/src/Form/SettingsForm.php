@@ -86,14 +86,13 @@ final class SettingsForm extends ConfigFormBase {
       $repository_options[$repository] = $definition['label'];
     }
 
-    $repositories_config = $this->config('drupaleasy_repositories.settings')
-      ->get('repositories_plugins') ?? [];
+    $repositories_config = $this->config('drupaleasy_repositories.settings') ?? [];
 
     $form['repositories_plugins'] = [
       '#type' => 'checkboxes',
       '#options' => $repository_options,
       '#title' => $this->t('Repositories'),
-      '#default_value' => $repositories_config->get('repositories_plugins'),
+      '#default_value' => $repositories_config->get('repositories_plugins') ?? [],
     ];
 
     return parent::buildForm($form, $form_state);

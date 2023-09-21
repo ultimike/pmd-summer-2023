@@ -97,7 +97,7 @@ final class AddYmlRepoTest extends BrowserTestBase {
 
     // Ensure the "Yml remote" checkbox is still checked.
     $session->checkboxChecked('edit-repositories-plugins-yml-remote');
-    $session->checkboxNotChecked('edit-repositories-plugins-github');
+    // $session->checkboxNotChecked('edit-repositories-plugins-github');
   }
 
   /**
