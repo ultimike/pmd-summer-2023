@@ -68,7 +68,7 @@ final class DrupaleasyRepositoriesService {
    * Validate the URLs are valid based on the enabled plugins and ensure they
    * haven't been added by another user.
    *
-   * @param array $urls
+   * @param array<mixed> $urls
    *   The urls to be validated.
    * @param int $uid
    *   The user id of the user submitting the URLs.
@@ -100,15 +100,25 @@ final class DrupaleasyRepositoriesService {
     foreach ($urls as $url) {
       if (is_array($url)) {
         if ($uri = trim($url['uri'])) {
-          $validated = FALSE;
+          $is_valid_url = FALSE;
           // Check to see if the URI is valid for any enabled plugins.
           /** @var \Drupal\drupaleasy_repositories\DrupaleasyRepositories\DrupaleasyRepositoriesInterface $repository_plugin */
           foreach ($repository_plugins as $repository_plugin) {
             if ($repository_plugin->validate($uri)) {
-              $validated = TRUE;
+              $is_valid_url = TRUE;
+              $repo_info = $repository_plugin->getRepo($uri);
+              if ($repo_info) {
+                if (!$this->isUnique($repo_info, $uid)) {
+                  $errors[] = $this->t('The repository url %uri has been added by another user.', ['%uri' => $uri]);
+                }
+                break;
+              }
+              else {
+                $errors[] = $this->t('The repository url %uri was not found.', ['%uri' => $uri]);
+              }
             }
           }
-          if (!$validated) {
+          if (!$is_valid_url) {
             $errors[] = $this->t('The repository url %uri is not valid.', ['%uri' => $uri]);
           }
         }
@@ -150,13 +160,14 @@ final class DrupaleasyRepositoriesService {
         }
       }
     }
-    return $this->updateRepositoryNodes($repos_metadata, $account);
+    return $this->updateRepositoryNodes($repos_metadata, $account) ||
+      $this->deleteRepositoryNodes($repos_metadata, $account);
   }
 
   /**
    * Update repository nodes for a given account.
    *
-   * @param array $repos_metadata
+   * @param array<string, array<string, string|int>> $repos_info
    *   The repository metadata from the sources.
    * @param \Drupal\Core\Entity\EntityInterface $account
    *   The user account whose repositories to update.
@@ -181,9 +192,8 @@ final class DrupaleasyRepositoriesService {
       $query->condition('type', 'repository')
         ->condition('uid', $account->id())
         ->condition('field_machine_name', $key)
-        ->condition('field_source', $repo_info['source'])
-        ->accessCheck(FALSE);
-      $results = $query->execute();
+        ->condition('field_source', $repo_info['source']);
+      $results = $query->accessCheck(FALSE)->execute();
 
       if ($results) {
         // A matching repository node exists, so we load it.
@@ -191,9 +201,20 @@ final class DrupaleasyRepositoriesService {
         $node = $node_storage->load(reset($results));
 
         // Check the hash to see if we need to update it.
-        // if ($hash != $hash_from_node) {
-        //   // Update the node.
-        // }.
+        if ($hash != $node->get('field_hash')->value) {
+          // Something has changed, update the node.
+          $node->setTitle((string) $repo_info['label']);
+          $node->set('field_description', $repo_info['description']);
+          $node->set('field_machine_name', $key);
+          $node->set('field_number_of_issues', $repo_info['num_open_issues']);
+          $node->set('field_source', $repo_info['source']);
+          $node->set('field_url', $repo_info['url']);
+          $node->set('field_hash', $hash);
+          if (!$this->dryRun) {
+            $node->save();
+            // $this->repoUpdated($node, 'updated');
+          }
+        }
       }
       else {
         // Create a new repository node.
@@ -211,13 +232,75 @@ final class DrupaleasyRepositoriesService {
         ]);
         if (!$this->dryRun) {
           $node->save();
-          //$this->repoUpdate($node, 'created');
+          // $this->repoUpdate($node, 'created');
         }
       }
-
     }
 
     return FALSE;
+  }
+
+  /**
+   * Delete repository nodes deleted from the source for a given user.
+   *
+   * @param array<string, array<string, string|int>> $repos_info
+   *   The repository metadata from the sources.
+   * @param \Drupal\Core\Entity\EntityInterface $account
+   *   The user account whose repositories to update.
+   *
+   * @return bool
+   *   TRUE if successful.
+   */
+  protected function deleteRepositoryNodes(array $repos_info, EntityInterface $account): bool {
+    /** @var \Drupal\node\NodeStorageInterface $node_storage */
+    $node_storage = $this->entityTypeManager->getStorage('node');
+
+    // Look for repository nodes from this user whose machine name doesn't
+    // match one from $repos_info.
+    $query = $node_storage->getQuery();
+    $query->condition('type', 'repository')
+      ->condition('uid', $account->id())
+      ->condition('field_machine_name', array_keys($repos_info), "NOT IN");
+    $results = $query->accessCheck(FALSE)->execute();
+
+    if ($results) {
+      $nodes = $node_storage->loadMultiple($results);
+      foreach ($nodes as $node) {
+        if (!$this->dryRun) {
+          $node->delete();
+        }
+      }
+    }
+
+    return TRUE;
+  }
+
+  /**
+   * Check uniqueness of a given repository.
+   *
+   * @param array<string, string|int> $repos_info
+   *   The repository metadata from the source.
+   * @param int $uid
+   *   The user id whose repositories to update.
+   *
+   * @return bool
+   *   TRUE if successful.
+   */
+  protected function isUnique(array $repo_info, int $uid): bool {
+    /** @var \Drupal\node\NodeStorageInterface $node_storage */
+    $node_storage = $this->entityTypeManager->getStorage('node');
+
+    $repo_info = array_pop($repo_info);
+
+    // Look for repository nodes from this user whose machine name doesn't
+    // match one from $repos_info.
+    $query = $node_storage->getQuery();
+    $query->condition('type', 'repository')
+      ->condition('uid', $uid, '<>')
+      ->condition('field_url', $repo_info['url']);
+    $results = $query->accessCheck(FALSE)->execute();
+
+    return !count($results);
   }
 
 }
