@@ -278,7 +278,7 @@ final class DrupaleasyRepositoriesService {
   /**
    * Check uniqueness of a given repository.
    *
-   * @param array<string, string|int> $repos_info
+   * @param array<string, string|int> $repo_info
    *   The repository metadata from the source.
    * @param int $uid
    *   The user id whose repositories to update.
