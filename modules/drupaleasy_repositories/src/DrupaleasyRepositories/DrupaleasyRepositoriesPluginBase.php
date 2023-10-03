@@ -12,6 +12,13 @@ use Drupal\Component\Plugin\PluginBase;
 abstract class DrupaleasyRepositoriesPluginBase extends PluginBase implements DrupaleasyRepositoriesInterface {
 
   /**
+   * The repository client used to make API calls.
+   *
+   * @var Object
+   */
+  protected Object $client;
+
+  /**
    * {@inheritdoc}
    */
   public function label(): string {
@@ -22,7 +29,7 @@ abstract class DrupaleasyRepositoriesPluginBase extends PluginBase implements Dr
   /**
    * {@inheritdoc}
    */
-  public function validate(string $url): bool {
+  public function validate(string $uri): bool {
     return FALSE;
   }
 
