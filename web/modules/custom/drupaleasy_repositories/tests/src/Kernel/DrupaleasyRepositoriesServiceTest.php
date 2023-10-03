@@ -171,7 +171,7 @@ final class DrupaleasyRepositoriesServiceTest extends KernelTestBase {
   }
 
   /**
-   * Returns Aquaman repository metadata.
+   * Returns various repository metadata.
    *
    * @param string $repo_name
    *   The machine name of the repository to return.
