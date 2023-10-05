@@ -19,7 +19,10 @@ final class DrupaleasyRepositoriesPluginManagerTest extends KernelTestBase {
    *
    * @var array<int, string>
    */
-  protected static $modules = ['drupaleasy_repositories'];
+  protected static $modules = [
+    'drupaleasy_repositories',
+    'key',
+  ];
 
   /**
    * Our plugin manager.
@@ -57,6 +60,29 @@ final class DrupaleasyRepositoriesPluginManagerTest extends KernelTestBase {
     $this->assertTrue($plugin_def['id'] == 'yml_remote', 'Plugin id does not match.');
     $this->assertTrue($plugin_def['label'] == 'Yml remote', 'Plugin label does not match.');
     $this->assertTrue($plugin_def['description'] == 'Remote .yml file that includes repository metadata.', 'Plugin description does not match.');
+  }
+
+  /**
+   * Test both the plugin manager and the Github plugin definition and type.
+   *
+   * @test
+   */
+  public function testGithubRemoteInstance(): void {
+    /** @var \Drupal\drupaleasy_repositories\Plugin\DrupaleasyRepositories\Github $example_instance */
+    $example_instance = $this->manager->createInstance('github');
+    $plugin_def = $example_instance->getPluginDefinition();
+
+    $this->assertInstanceOf('\Drupal\drupaleasy_repositories\Plugin\DrupaleasyRepositories\Github', $example_instance, 'Plugin type does not match');
+    $this->assertInstanceOf('\Drupal\drupaleasy_repositories\DrupaleasyRepositories\DrupaleasyRepositoriesPluginBase', $example_instance, 'Plugin parent type does not match');
+    $this->assertInstanceOf('\Drupal\Component\Plugin\PluginBase', $example_instance, 'Plugin grandparent type does not match');
+
+    $this->assertArrayHasKey('id', $plugin_def, 'The "id" key is missing from the plugin definition.');
+    $this->assertArrayHasKey('label', $plugin_def, 'The "label" key is missing from the plugin definition.');
+    $this->assertArrayHasKey('description', $plugin_def, 'The "description" key is missing from the plugin definition.');
+
+    $this->assertTrue($plugin_def['id'] == 'github', 'Plugin id does not match.');
+    $this->assertTrue($plugin_def['label'] == 'GitHub', 'Plugin label does not match.');
+    $this->assertTrue($plugin_def['description'] == 'GitHub.com', 'Plugin description does not match.');
   }
 
 }

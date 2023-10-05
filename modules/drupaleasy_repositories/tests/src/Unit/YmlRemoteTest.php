@@ -4,8 +4,12 @@ declare(strict_types = 1);
 
 namespace Drupal\Tests\drupaleasy_repositories\Unit;
 
+use Drupal\Core\Messenger\Messenger;
+use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\drupaleasy_repositories\Plugin\DrupaleasyRepositories\YmlRemote;
+use Drupal\key\KeyRepositoryInterface;
 use Drupal\Tests\UnitTestCase;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Test description.
@@ -22,11 +26,46 @@ final class YmlRemoteTest extends UnitTestCase {
   protected YmlRemote $ymlRemote;
 
   /**
+   * The messenger service.
+   *
+   * @var \Drupal\Core\Messenger\MessengerInterface|\PHPUnit\Framework\MockObject\MockObject
+   */
+  protected MessengerInterface|MockObject $messenger;
+
+  /**
+   * The key repository service.
+   *
+   * @var \Drupal\key\KeyRepositoryInterface|\PHPUnit\Framework\MockObject\MockObject
+   */
+  protected KeyRepositoryInterface|MockObject $keyRepository;
+
+  /**
    * {@inheritdoc}
    */
   protected function setUp(): void {
     parent::setUp();
-    $this->ymlRemote = new YmlRemote([], 'yml_remote', []);
+
+    // Mock the messenger service.
+    $this->messenger = $this->getMockBuilder(Messenger::class)
+      ->disableOriginalConstructor()
+      //->onlyMethods(['addStatus'])
+      ->getMock();
+
+    // See https://www.drupal.org/docs/automated-testing/phpunit-in-drupal/mocking-entities-and-services-with-phpunit-and-mocks
+//    $this->messenger->expects($this->any())
+//      ->method('addStatus');
+
+//    $this->messenger
+//      ->expects($this->any())
+//      //->willReturn('yes')
+//      ->method('addStatus');
+
+    // Mock the key_repository service.
+    $this->keyRepository = $this->getMockBuilder('\Drupal\key\KeyRepositoryInterface')
+      ->disableOriginalConstructor()
+      ->getMock();
+
+    $this->ymlRemote = new YmlRemote([], 'yml_remote', [], $this->messenger, $this->keyRepository);
   }
 
   /**

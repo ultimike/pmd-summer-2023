@@ -30,6 +30,7 @@ final class DrupaleasyRepositoriesServiceTest extends KernelTestBase {
     'field',
     'text',
     'link',
+    'key',
   ];
 
   /**
