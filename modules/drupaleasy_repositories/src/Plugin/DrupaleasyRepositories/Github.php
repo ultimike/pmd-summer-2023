@@ -54,9 +54,9 @@ final class Github extends DrupaleasyRepositoriesPluginBase {
       $repo = $this->client->api('repo')->show($path_parts[1], $path_parts[2]);
     }
     catch (\Throwable $th) {
-      //$this->messenger->addMessage($this->t('GitHub error: @error', [
-      //  '@error' => $th->getMessage(),
-      //]));
+      $this->messenger->addMessage($this->t('GitHub error: @error', [
+        '@error' => $th->getMessage(),
+      ]));
       return [];
     }
 
@@ -69,10 +69,14 @@ final class Github extends DrupaleasyRepositoriesPluginBase {
    */
   protected function setAuthentication(): void {
     $this->client = new Client();
-    // The authenticate() method does not actually call the GitHub API,
-    // rather it only stores the authentication info in $client for use when
-    // $client makes an API call that requires authentication.
-    $this->client->authenticate('ultimike', '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', AuthMethod::CLIENT_ID);
+
+    if ($github_key = $this->keyRepository->getKey('github')) {
+      $github_key_values = $github_key->getKeyValues();
+      // The authenticate() method does not actually call the GitHub API,
+      // rather it only stores the authentication info in $client for use when
+      // $client makes an API call that requires authentication.
+      $this->client->authenticate($github_key_values['username'], $github_key_values['personal_access_token'], AuthMethod::CLIENT_ID);
+    }
   }
 
 }

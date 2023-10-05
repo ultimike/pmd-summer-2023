@@ -1,6 +1,6 @@
 name: 'DrupalEasy Repositories'
 type: module
-description: 'Create repository nodes from remote Git respository metadata.'
+description: 'Create repository nodes from remote Git repository metadata.'
 package: DrupalEasy
 core_version_requirement: ^10
 version: 0.0.0
@@ -11,3 +11,4 @@ dependencies:
   - drupal:menu_ui
   - drupal:path
   - drupal:field
+  - key:key
