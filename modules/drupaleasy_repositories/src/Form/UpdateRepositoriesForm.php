@@ -7,6 +7,7 @@ namespace Drupal\drupaleasy_repositories\Form;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\drupaleasy_repositories\DrupaleasyRepositoriesBatch;
 use Drupal\drupaleasy_repositories\DrupaleasyRepositoriesService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -22,6 +23,7 @@ final class UpdateRepositoriesForm extends FormBase {
     return new static(
       $container->get('drupaleasy_repositories.service'),
       $container->get('entity_type.manager'),
+      $container->get('drupaleasy_repositories.batch'),
     );
   }
 
@@ -33,10 +35,11 @@ final class UpdateRepositoriesForm extends FormBase {
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
    *   The Drupal core entity type manager service.
    */
-  public function __construct(protected DrupaleasyRepositoriesService $repositoriesService, protected EntityTypeManagerInterface $entityTypeManager) {
-    $this->repositoriesService = $repositoriesService;
-    $this->entityTypeManager = $entityTypeManager;
-  }
+  public function __construct(
+    protected DrupaleasyRepositoriesService $repositoriesService,
+    protected EntityTypeManagerInterface $entityTypeManager,
+    protected DrupaleasyRepositoriesBatch $drupaleasyRepositoriesBatch,
+  ) {}
 
   /**
    * {@inheritdoc}
@@ -79,7 +82,23 @@ final class UpdateRepositoriesForm extends FormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
-    $this->messenger()->addStatus($this->t('The message has been sent.'));
+    if ($uid = $form_state->getValue('uid')) {
+      /** @var \Drupal\user\UserStorageInterface $user_storage */
+      $user_storage = $this->entityTypeManager->getStorage('user');
+
+      $account = $user_storage->load($uid);
+      if ($account) {
+        if ($this->repositoriesService->updateRepositories($account)) {
+          $this->messenger()->addMessage($this->t('Repositories updated.'));
+        }
+      }
+      else {
+        $this->messenger()->addMessage($this->t('User does not exist.'));
+      }
+    }
+    else {
+      $this->drupaleasyRepositoriesBatch->updateAllUserRepositories();
+    }
   }
 
 }
