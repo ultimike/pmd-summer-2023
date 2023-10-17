@@ -34,6 +34,8 @@ final class UpdateRepositoriesForm extends FormBase {
    *   The Drupaleasy Repositories service.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
    *   The Drupal core entity type manager service.
+   * @param \Drupal\drupaleasy_repositories\DrupaleasyRepositoriesBatch $drupaleasyRepositoriesBatch
+   *   The DrupalEasy Repositories Batch service.
    */
   public function __construct(
     protected DrupaleasyRepositoriesService $repositoriesService,

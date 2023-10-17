@@ -46,26 +46,14 @@ final class YmlRemoteTest extends UnitTestCase {
     parent::setUp();
 
     // Mock the messenger service.
-    $this->messenger = $this->getMockBuilder(Messenger::class)
-      ->disableOriginalConstructor()
-      //->onlyMethods(['addStatus'])
-      ->getMock();
-
-    // See https://www.drupal.org/docs/automated-testing/phpunit-in-drupal/mocking-entities-and-services-with-phpunit-and-mocks
-//    $this->messenger->expects($this->any())
-//      ->method('addStatus');
-
-//    $this->messenger
-//      ->expects($this->any())
-//      //->willReturn('yes')
-//      ->method('addStatus');
+    $this->messenger = $this->createMock(Messenger::class);
 
     // Mock the key_repository service.
-    $this->keyRepository = $this->getMockBuilder('\Drupal\key\KeyRepositoryInterface')
-      ->disableOriginalConstructor()
-      ->getMock();
+    $this->keyRepository = $this->createMock(KeyRepositoryInterface::class);
 
     $this->ymlRemote = new YmlRemote([], 'yml_remote', [], $this->messenger, $this->keyRepository);
+    // We need to add this because YmlRemoteTest::getRepo() calls t().
+    $this->ymlRemote->setStringTranslation($this->getStringTranslationStub());
   }
 
   /**

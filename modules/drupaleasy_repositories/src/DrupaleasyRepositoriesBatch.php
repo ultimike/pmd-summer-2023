@@ -1,4 +1,6 @@
-<?php declare(strict_types = 1);
+<?php
+
+declare(strict_types = 1);
 
 namespace Drupal\drupaleasy_repositories;
 
@@ -53,7 +55,7 @@ final class DrupaleasyRepositoriesBatch {
    *
    * @param int $uid
    *   User ID to update.
-   * @param array|\ArrayAccess $context
+   * @param array<mixed>|\ArrayAccess $context
    *   Context for operations. We do not want to type hint this as an array or
    *   an object as sometimes it is an array (when calling from a form) and
    *   sometimes it is an object (when calling from Drush).

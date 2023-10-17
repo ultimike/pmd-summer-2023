@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="DDEV" uuid="0ec7f64c-d390-4dff-b4ca-fc34e2ac2917">
+    <data-source source="LOCAL" name="DDEV" uuid="80e900d4-d3dc-454b-94f7-23c9077a5acc">
       <driver-ref>mariadb</driver-ref>
       <synchronize>true</synchronize>
       <configured-by-url>true</configured-by-url>
       <remarks>DDEV generated data source</remarks>
       <jdbc-driver>org.mariadb.jdbc.Driver</jdbc-driver>
-      <jdbc-url>jdbc:mariadb://127.0.0.1:50139/db?user=db&amp;password=db</jdbc-url>
+      <jdbc-url>jdbc:mariadb://127.0.0.1:50431/db?user=db&amp;password=db</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
   </component>
