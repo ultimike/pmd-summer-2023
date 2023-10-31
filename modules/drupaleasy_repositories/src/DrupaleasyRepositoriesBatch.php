@@ -26,8 +26,10 @@ final class DrupaleasyRepositoriesBatch {
 
   /**
    * Updates all user repositories using the Batch API.
+   *
+   * @param
    */
-  public function updateAllUserRepositories(): void {
+  public function updateAllUserRepositories(bool $drush = FALSE): void {
     $operations = [];
 
     // Get all active users.
@@ -48,6 +50,10 @@ final class DrupaleasyRepositoriesBatch {
 
     // Submit the batch for processing.
     batch_set($batch);
+
+    if ($drush) {
+      drush_backend_batch_process();
+    }
   }
 
   /**
