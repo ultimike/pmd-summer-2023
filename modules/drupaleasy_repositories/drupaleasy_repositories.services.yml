@@ -11,5 +11,11 @@ services:
     class: Drupal\drupaleasy_repositories\DrupaleasyRepositoriesBatch
     arguments: ['@entity_type.manager', '@extension.list.module', '@drupaleasy_repositories.service']
 
+  drupaleasy_repositories.uninstall_validator:
+    class: Drupal\drupaleasy_repositories\DrupalEasyRepositoriesUninstallValidator
+    arguments: ['@entity_type.manager']
+    tags:
+      - { name: module_install.uninstall_validator }
+
 parameters:
   drupaleasy_repositories.dry_run: false
