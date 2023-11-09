@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace Drupal\drupaleasy_repositories\Drush\Commands;
 
+use Drupal\Core\Cache\CacheTagsInvalidatorInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\drupaleasy_repositories\DrupaleasyRepositoriesBatch;
 use Drupal\drupaleasy_repositories\DrupaleasyRepositoriesService;
@@ -25,7 +26,8 @@ final class DrupaleasyRepositoriesCommands extends DrushCommands {
   public function __construct(
     private readonly DrupaleasyRepositoriesService $repositoriesService,
     private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly DrupaleasyRepositoriesBatch $drupaleasyRepositoriesBatch
+    private readonly DrupaleasyRepositoriesBatch $drupaleasyRepositoriesBatch,
+    private readonly CacheTagsInvalidatorInterface $cacheInvalidator,
   ) {
     parent::__construct();
   }
@@ -69,6 +71,10 @@ final class DrupaleasyRepositoriesCommands extends DrushCommands {
       // Get list of all user IDs to check.
       $this->drupaleasyRepositoriesBatch->updateAllUserRepositories(TRUE);
     }
+
+    // Invalidate the cache for anything with the drupaleasy_repositories cache
+    // tag.
+    $this->cacheInvalidator->invalidateTags(['drupaleasy_repositories']);
 
   }
 
