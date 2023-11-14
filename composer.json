@@ -19,6 +19,7 @@
         "drupal/core-composer-scaffold": "^10.1",
         "drupal/core-project-message": "^10.1",
         "drupal/core-recommended": "^10.1",
+        "drupal/views_custom_cache_tag": "^1.3",
         "drupaleasy/drupaleasy_notify": "^1.0",
         "drupaleasy/drupaleasy_repositories": "^1.0",
         "drush/drush": "^12.1"
