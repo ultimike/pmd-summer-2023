@@ -1,0 +1,8 @@
+parameters:
+  ignoreErrors:
+    - '#with no value type specified in iterable type array.$#'
+    - '#return type has no value type specified in iterable type array.$#'
+    - '#Unsafe usage of new static\(\).$#'
+    - '#should return array\<string\> but returns array\<int\, Drupal\\Core\\StringTranslation\\TranslatableMarkup\>.$#'
+    - '#of method Drupal\\Core\\Form\\FormStateInterface::setErrorByName\(\) expects string, Drupal\\Core\\StringTranslation\\TranslatableMarkup given.$#'
+    - '#Class(.+)\\Annotation\\(.+)has an uninitialized readonly property(.+). Assign it in the constructor.$#'

@@ -73,7 +73,7 @@ abstract class DrupaleasyRepositoriesPluginBase extends PluginBase implements Dr
    * @param string $uri
    *   The URI of the repository.
    *
-   * @return array<string, array<string, string>>
+   * @return array<string, array<string, string|int>>
    *   An array containing info about a single repository.
    */
   protected function mapToCommonFormat(string $machine_name, string $label, string|null $description, int $num_open_issues, string $uri): array {

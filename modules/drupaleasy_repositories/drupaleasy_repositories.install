@@ -17,7 +17,7 @@ function drupaleasy_repositories_install(): void {
 /**
  * Implements hook_uninstall().
  */
-function drupaleasy_repositories_uninstall() {
+function drupaleasy_repositories_uninstall(): void {
   FieldStorageConfig::loadByName('user', 'field_repository_url')->delete();
   \Drupal::service('messenger')->addStatus('The Repository URL field on the user entity has been deleted.');
 }

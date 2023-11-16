@@ -39,7 +39,7 @@ final class SettingsForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container) {
+  public static function create(ContainerInterface $container): self {
     return new static(
       $container->get('config.factory'),
       $container->get('plugin.manager.drupaleasy_repositories')
@@ -86,7 +86,7 @@ final class SettingsForm extends ConfigFormBase {
       $repository_options[$repository] = $definition['label'];
     }
 
-    $repositories_config = $this->config('drupaleasy_repositories.settings') ?? [];
+    $repositories_config = $this->config('drupaleasy_repositories.settings');
 
     $form['repositories_plugins'] = [
       '#type' => 'checkboxes',

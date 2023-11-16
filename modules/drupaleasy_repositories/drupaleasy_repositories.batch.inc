@@ -10,7 +10,7 @@
  *
  * @param int $uid
  *   User ID to update.
- * @param array<mixed>|\ArrayAccess $context
+ * @param array<mixed>|\ArrayAccess<string, array<mixed>> $context
  *   Batch API context.
  */
 function drupaleasy_update_repositories_batch_operation(int $uid, array|\ArrayAccess &$context): void {

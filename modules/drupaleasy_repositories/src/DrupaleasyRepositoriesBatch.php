@@ -27,7 +27,8 @@ final class DrupaleasyRepositoriesBatch {
   /**
    * Updates all user repositories using the Batch API.
    *
-   * @param
+   * @param bool $drush
+   *   Is this being called from Drush?
    */
   public function updateAllUserRepositories(bool $drush = FALSE): void {
     $operations = [];
@@ -61,7 +62,7 @@ final class DrupaleasyRepositoriesBatch {
    *
    * @param int $uid
    *   User ID to update.
-   * @param array<mixed>|\ArrayAccess $context
+   * @param array<mixed>|\ArrayAccess<string, array<mixed>> $context
    *   Context for operations. We do not want to type hint this as an array or
    *   an object as sometimes it is an array (when calling from a form) and
    *   sometimes it is an object (when calling from Drush).
